@@ -97,6 +97,11 @@ object PlayIntegrityFixCatalog {
             PlayIntegrityFixPropertyCategory.SECURITY
         ),
         PlayIntegrityFixPropertyRule(
+            "persist.sys.pihooks.first_api_level",
+            "Spoofed first API level",
+            PlayIntegrityFixPropertyCategory.SECURITY
+        ),
+        PlayIntegrityFixPropertyRule(
             "persist.sys.pihooks_SECURITY_PA",
             "Spoofed security patch",
             PlayIntegrityFixPropertyCategory.SECURITY
