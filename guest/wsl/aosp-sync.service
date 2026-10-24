@@ -1,0 +1,28 @@
+[Unit]
+Description=AOSP supervised sync (repo sync with crash retry)
+Documentation=https://source.android.com/docs/setup/download
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=/home/dmond/sp/aosp
+
+# systemd does not read ~/.profile or ~/.profile.d, so repo (~/bin) and
+# the zero-sudo deps (~/opt/deps) must be added explicitly.
+Environment=HOME=/home/dmond
+Environment=PATH=/home/dmond/bin:/home/dmond/opt/deps/usr/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+
+ExecStart=/bin/bash /mnt/c/Users/hesti/Desktop/Vernier-Detector-Refactoring/guest/wsl/sync-aosp.sh
+Restart=always
+RestartSec=15
+
+# repo sync is heavy IO + network; keep it away from the OOM killer.
+OOMScoreAdjust=-200
+
+# The retry loop lives inside sync-aosp.sh, so Restart=always just resets it.
+KillMode=mixed
+TimeoutStopSec=30
+
+[Install]
+WantedBy=default.target

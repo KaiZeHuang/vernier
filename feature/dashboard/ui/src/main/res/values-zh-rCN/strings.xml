@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="verdict_all_clear">正常</string>
+    <string name="verdict_warning">注意</string>
+    <string name="verdict_danger">危险</string>
+    <string name="verdict_not_checked">未检测</string>
+    <string name="verdict_measuring">测量中</string>
+    <string name="verdict_instrument_label">运行环境检测</string>
+    <string name="verdict_progress">%1$d/%2$d 项已测量</string>
+    <string name="verdict_group_boot_trust">引导与信任</string>
+    <string name="verdict_group_runtime_hooks">运行时与钩子</string>
+    <string name="verdict_group_mounts_files">挂载与文件</string>
+    <string name="verdict_group_policy_properties">策略与属性</string>
+    <string name="verdict_group_environment">运行环境</string>
+</resources>

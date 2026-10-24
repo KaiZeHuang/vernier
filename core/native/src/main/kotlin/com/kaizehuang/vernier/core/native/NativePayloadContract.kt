@@ -1,0 +1,51 @@
+package com.kaizehuang.vernier.core.native
+
+import com.kaizehuang.vernier.core.evidence.NamedFailure
+
+/** Thrown when a payload arrived without a key the parser depends on. */
+public class NativePayloadContractViolation(
+    message: String,
+) : IllegalArgumentException(message), NamedFailure {
+    override val failureName: String = "NativePayloadContractViolation"
+}
+
+/**
+ * Checks that a line-oriented `KEY=value` payload still carries the keys its parser depends on.
+ *
+ * Parsers in this app stay deliberately lenient: an unknown key is ignored and a malformed record is
+ * skipped, so a payload from a newer native layer keeps parsing against an older build. That
+ * leniency has one cost - a key the native side renames or drops reads exactly like a device with
+ * nothing to report, and the snapshot is marked collected. Naming the few keys the native side emits
+ * unconditionally closes that gap without giving up the tolerance for additions.
+ *
+ * A blank payload never reaches here. It already means "the probe produced no evidence" and every
+ * parser answers it with a default snapshot first, so this function has no case for it and treats it
+ * like any other payload whose keys are absent.
+ */
+public object NativePayloadContract {
+
+    public fun requireKeys(
+        payload: String,
+        vararg keys: String,
+    ) {
+        if (keys.isEmpty()) {
+            return
+        }
+
+        val present = payload.lineSequence().mapNotNullTo(mutableSetOf()) { line ->
+            val trimmed = line.trim()
+            val separator = trimmed.indexOf('=')
+            if (separator <= 0) null else trimmed.substring(0, separator)
+        }
+
+        val missing = keys.filterNot(present::contains)
+        if (missing.isEmpty()) {
+            return
+        }
+
+        val label = if (missing.size == 1) "key" else "keys"
+        throw NativePayloadContractViolation(
+            "missing required $label ${missing.joinToString()}",
+        )
+    }
+}

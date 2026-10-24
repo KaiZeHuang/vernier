@@ -1,0 +1,111 @@
+package com.kaizehuang.vernier.capability.helperprocess.data
+
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertTrue
+import org.junit.Test
+
+class HelperProcessSnapshotTest {
+
+    @Test
+    fun `parse handles extended payload with isolated profile`() {
+        val separator = "\u001f"
+        val snapshot = HelperProcessSnapshot.parse(
+            """
+            AVAILABLE=1
+            PROFILE=ISOLATED
+            NATIVE_AVAILABLE=1
+            UID=99000
+            PACKAGE_NAME=com.kaizehuang.vernier
+            PROCESS_NAME=com.kaizehuang.vernier:isolated
+            UID_NAME=u0_i321
+            PACKAGES_FOR_UID=com.kaizehuang.vernier$separator com.example.sidecar
+            CLASS_PATH_ENTRIES=/data/app/base.apk$separator/data/app/host.apk
+            SOURCE_DIR=/data/app/base.apk
+            SPLIT_SOURCE_DIRS=/data/app/split_config.arm64_v8a.apk
+            MOUNT_NAMESPACE_INODE=mnt:[4026533000]
+            APEX_MOUNT_KEY=1|8:1|/|/apex|ext4|/dev/block/dm-1
+            SYSTEM_MOUNT_KEY=2|8:1|/|/system|ext4|/dev/block/dm-2
+            VENDOR_MOUNT_KEY=3|8:1|/|/vendor|ext4|/dev/block/dm-3
+            FILES_DIR=/data/user/0/com.kaizehuang.vernier/files
+            CACHE_DIR=/data/user/0/com.kaizehuang.vernier/cache
+            CODE_PATH=/data/app/base.apk
+            FINDING=RUNTIME	WARNING	Graphics renderer	gfxstream	Google\ngfxstream\nOpenGL ES 3.2
+            """.trimIndent(),
+        )
+
+        assertTrue(snapshot.available)
+        assertEquals(HelperProcessProfile.ISOLATED, snapshot.profile)
+        assertEquals(99000, snapshot.uid)
+        assertEquals("com.kaizehuang.vernier:isolated", snapshot.processName)
+        assertEquals(2, snapshot.packagesForUid.size)
+        assertEquals(2, snapshot.classPathEntries.size)
+        assertEquals("mnt:[4026533000]", snapshot.mountNamespaceInode)
+        assertEquals("1|8:1|/|/apex|ext4|/dev/block/dm-1", snapshot.apexMountKey)
+        assertEquals(1, snapshot.findings.size)
+        assertEquals(1, snapshot.artifactKeys.size)
+    }
+
+    @Test
+    fun `keeps the finding columns aligned when a renderer string carries a separator`() {
+        val snapshot = HelperProcessSnapshot.parse(
+            "AVAILABLE=1\n" +
+                "FINDING=RUNTIME\tWARNING\tGraphics renderer\t" +
+                "gfxstream\\ttab\\nnewline\tGoogle",
+        )
+
+        val finding = snapshot.findings.single()
+        assertEquals("RUNTIME", finding.group)
+        assertEquals("WARNING", finding.severity)
+        assertEquals("Graphics renderer", finding.label)
+        assertEquals("gfxstream\ttab\nnewline", finding.value)
+        assertEquals("Google", finding.detail)
+    }
+
+    @Test
+    fun `parse handles proc mount view divergence fields`() {
+        val snapshot = HelperProcessSnapshot.parse(
+            """
+            AVAILABLE=1
+            PROFILE=ISOLATED
+            PROC_MOUNT_VIEW_AVAILABLE=1
+            PROC_MOUNT_VIEW_COUNT=3
+            PROC_MOUNT_VIEW_EXPECTED=1
+            PROC_MOUNT_VIEW_PIDS=47
+            PROC_MOUNT_VIEW_DIVERGENT=1
+            PROC_MOUNT_VIEW_TOKEN_HIT=1
+            PROC_MOUNT_VIEW_TOKEN_KIND=magisk
+            PROC_MOUNT_VIEW_TOKEN_DETAIL=/magisk /system overlay rw
+            PROC_MOUNT_VIEW_DETAIL=Scanned 47 pid(s), 3 distinct view(s), expected 1.
+            """.trimIndent(),
+        )
+
+        assertTrue(snapshot.available)
+        assertTrue(snapshot.procMountViewAvailable)
+        assertEquals(3, snapshot.procMountViewCount)
+        assertEquals(1, snapshot.procMountViewExpected)
+        assertEquals(47, snapshot.procMountViewPidCount)
+        assertTrue(snapshot.procMountViewDivergent)
+        assertTrue(snapshot.procMountViewTokenHit)
+        assertEquals(ProcMountViewRootToken.MAGISK, snapshot.procMountViewToken)
+        assertEquals("/magisk /system overlay rw", snapshot.procMountViewTokenDetail)
+        assertTrue(snapshot.procMountViewDetail.contains("3 distinct view(s)"))
+    }
+
+    @Test
+    fun `parse defaults proc mount view fields when absent`() {
+        val snapshot = HelperProcessSnapshot.parse(
+            """
+            AVAILABLE=1
+            PROFILE=ISOLATED
+            """.trimIndent(),
+        )
+
+        assertFalse(snapshot.procMountViewAvailable)
+        assertEquals(0, snapshot.procMountViewCount)
+        assertEquals(1, snapshot.procMountViewExpected)
+        assertEquals(0, snapshot.procMountViewPidCount)
+        assertFalse(snapshot.procMountViewDivergent)
+        assertFalse(snapshot.procMountViewTokenHit)
+    }
+}

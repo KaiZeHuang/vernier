@@ -1,0 +1,55 @@
+package com.kaizehuang.vernier.core.designsystem.theme
+
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.LinearOutSlowInEasing
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.SpringSpec
+import androidx.compose.animation.core.TweenSpec
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
+
+public object MotionTokens {
+    public object Duration {
+        public const val Short4: Int = 200
+        public const val Medium2: Int = 300
+    }
+
+    public val CardPressScale: SpringSpec<Float> = spring<Float>(
+        dampingRatio = Spring.DampingRatioMediumBouncy,
+        stiffness = Spring.StiffnessLow,
+    )
+
+    public val PageTransition: SpringSpec<Float> = spring<Float>(
+        dampingRatio = Spring.DampingRatioNoBouncy,
+        stiffness = Spring.StiffnessMediumLow,
+    )
+
+    public val IconRotation: TweenSpec<Float> = tween<Float>(
+        durationMillis = Duration.Medium2,
+        easing = FastOutSlowInEasing,
+    )
+
+    public val FadeInOut: TweenSpec<Float> = tween<Float>(
+        durationMillis = Duration.Short4,
+        easing = LinearOutSlowInEasing,
+    )
+
+    // Critically damped, roughly 0.4 s: content settles without overshoot, as Apple's smooth
+    // spring does.
+    public const val SmoothStiffness: Float = 250f
+    public const val SmoothDamping: Float = 1f
+
+    /** A spring for sizes and offsets that open, close or slide. */
+    public fun <T> smoothSpring(visibilityThreshold: T? = null): SpringSpec<T> = spring(
+        dampingRatio = SmoothDamping,
+        stiffness = SmoothStiffness,
+        visibilityThreshold = visibilityThreshold,
+    )
+
+    /** How far a pressed container shrinks, and the quick spring it shrinks and recovers with. */
+    public const val PressedScale: Float = 0.97f
+    public val PressScale: SpringSpec<Float> = spring(
+        dampingRatio = 0.7f,
+        stiffness = 700f,
+    )
+}

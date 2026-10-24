@@ -1,0 +1,181 @@
+{
+  "schema_version": 2,
+  "cmake_lists": "sdk/runtime/src/main/cpp/CMakeLists.txt",
+  "unit_registry": "VERNIER_NATIVE_UNITS",
+  "unit_function": "vernier_native_unit",
+  "aggregate_library": "vernier",
+  "units": {
+    "common": {
+      "path": "common",
+      "owner": ":core:native",
+      "target": "vernier_common",
+      "may_include": []
+    },
+    "tee": {
+      "path": "tee",
+      "owner": ":feature:tee:data",
+      "target": "vernier_tee",
+      "may_include": [
+        "common"
+      ]
+    },
+    "packageinventory": {
+      "path": "packageinventory",
+      "owner": ":capability:packageinventory:data",
+      "target": "vernier_packageinventory",
+      "may_include": [
+        "common"
+      ]
+    },
+    "su": {
+      "path": "su",
+      "owner": ":feature:su:data",
+      "target": "vernier_su",
+      "may_include": [
+        "common"
+      ]
+    },
+    "selinuxpolicy": {
+      "path": "selinuxpolicy",
+      "owner": ":capability:selinuxpolicy:data",
+      "target": "vernier_selinuxpolicy",
+      "may_include": [
+        "common"
+      ]
+    },
+    "selinux": {
+      "path": "selinux",
+      "owner": ":feature:selinux:data",
+      "target": "vernier_selinux",
+      "may_include": [
+        "common"
+      ]
+    },
+    "customrom": {
+      "path": "customrom",
+      "owner": ":feature:customrom:data",
+      "target": "vernier_customrom",
+      "may_include": [
+        "common"
+      ]
+    },
+    "kernelcheck": {
+      "path": "kernelcheck",
+      "owner": ":feature:kernelcheck:data",
+      "target": "vernier_kernelcheck",
+      "may_include": [
+        "common"
+      ]
+    },
+    "systemproperties": {
+      "path": "systemproperties",
+      "owner": ":capability:systemproperties:data",
+      "target": "vernier_systemproperties",
+      "may_include": [
+        "common"
+      ]
+    },
+    "bootloader": {
+      "path": "bootloader",
+      "owner": ":feature:bootloader:data",
+      "target": "vernier_bootloader",
+      "may_include": [
+        "common"
+      ]
+    },
+    "mount": {
+      "path": "mount",
+      "owner": ":feature:mount:data",
+      "target": "vernier_mount",
+      "may_include": [
+        "common"
+      ]
+    },
+    "zygotenext": {
+      "path": "mount/zygotenext",
+      "owner": ":feature:mount:data",
+      "target": "main",
+      "may_include": [
+        "common"
+      ]
+    },
+    "preload": {
+      "path": "preload",
+      "owner": ":capability:earlypreload:data",
+      "target": "vernier_preload",
+      "may_include": [
+        "common"
+      ]
+    },
+    "memory": {
+      "path": "memory",
+      "owner": ":feature:memory:data",
+      "target": "vernier_memory",
+      "may_include": [
+        "common"
+      ]
+    },
+    "playintegrityfix": {
+      "path": "playintegrityfix",
+      "owner": ":feature:playintegrityfix:data",
+      "target": "vernier_playintegrityfix",
+      "may_include": [
+        "common"
+      ]
+    },
+    "nativeroot": {
+      "path": "nativeroot",
+      "owner": ":feature:nativeroot:data",
+      "target": "vernier_nativeroot",
+      "may_include": [
+        "common"
+      ]
+    },
+    "lsposed": {
+      "path": "lsposed",
+      "owner": ":feature:lsposed:data",
+      "target": "vernier_lsposed",
+      "may_include": [
+        "common"
+      ]
+    },
+    "zygisk": {
+      "path": "zygisk",
+      "owner": ":feature:zygisk:data",
+      "target": "vernier_zygisk",
+      "may_include": [
+        "common"
+      ]
+    },
+    "virtualization": {
+      "path": "virtualization",
+      "owner": ":capability:helperprocess:data",
+      "target": "vernier_virtualization",
+      "may_include": [
+        "common"
+      ]
+    }
+  },
+  "include_exceptions": [
+    {
+      "unit": "preload",
+      "header": "virtualization/snapshot_builder.h",
+      "reason": "The startup virtualization preload runs the same collect_snapshot probe as the runtime virtualization bridge so both snapshots come from one implementation, then reads its mount keys and each finding's typed group and early signal. Both units link into libvernier.so."
+    },
+    {
+      "unit": "customrom",
+      "header": "systemproperties/prop_area_file.h",
+      "reason": "The custom ROM property integrity probe walks the same bionic property areas as the system properties hole scan, so both use the systemproperties unit's one parser for that layout. The custom ROM probe passes its own dirty backup choice and a visitor that collects the properties it inspects. Both units link into libvernier.so."
+    },
+    {
+      "unit": "customrom",
+      "header": "systemproperties/prop_area_format.h",
+      "reason": "The custom ROM property integrity probe walks the same bionic property areas as the system properties hole scan, so both use the systemproperties unit's one parser for that layout. The custom ROM probe passes its own dirty backup choice and a visitor that collects the properties it inspects. Both units link into libvernier.so."
+    },
+    {
+      "unit": "customrom",
+      "header": "systemproperties/prop_area_parser.h",
+      "reason": "The custom ROM property integrity probe walks the same bionic property areas as the system properties hole scan, so both use the systemproperties unit's one parser for that layout. The custom ROM probe passes its own dirty backup choice and a visitor that collects the properties it inspects. Both units link into libvernier.so."
+    }
+  ]
+}

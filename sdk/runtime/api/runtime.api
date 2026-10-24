@@ -1,0 +1,39 @@
+public final class com/kaizehuang/vernier/sdk/DetectorCatalog {
+	public static final field INSTANCE Lcom/kaizehuang/vernier/sdk/DetectorCatalog;
+	public final fun getAll ()Ljava/util/List;
+}
+
+public final class com/kaizehuang/vernier/sdk/VernierDetector {
+	public static final field INSTANCE Lcom/kaizehuang/vernier/sdk/VernierDetector;
+	public final fun captureLaunchEvidence (Landroid/content/Intent;)V
+	public final fun createProcMountSampler (Landroid/content/Context;)Landroid/webkit/WebView;
+	public final fun getDetectors ()Ljava/util/List;
+	public final fun packageVisibility (Landroid/content/Context;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun results (Landroid/content/Context;)Lkotlinx/coroutines/flow/Flow;
+	public final fun scan (Landroid/content/Context;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class com/kaizehuang/vernier/sdk/VernierZygotePreload : android/app/ZygotePreload {
+	public fun <init> ()V
+	public fun doPreload (Landroid/content/pm/ApplicationInfo;)V
+}
+
+public final class com/kaizehuang/vernier/sdk/PackageVisibility {
+	public fun <init> (Lcom/kaizehuang/vernier/sdk/PackageVisibility$Scope;IZ)V
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getScope ()Lcom/kaizehuang/vernier/sdk/PackageVisibility$Scope;
+	public final fun getSuspiciouslyLow ()Z
+	public final fun getVisiblePackageCount ()I
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/kaizehuang/vernier/sdk/PackageVisibility$Scope : java/lang/Enum {
+	public static final field FULL Lcom/kaizehuang/vernier/sdk/PackageVisibility$Scope;
+	public static final field RESTRICTED Lcom/kaizehuang/vernier/sdk/PackageVisibility$Scope;
+	public static final field UNKNOWN Lcom/kaizehuang/vernier/sdk/PackageVisibility$Scope;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lcom/kaizehuang/vernier/sdk/PackageVisibility$Scope;
+	public static fun values ()[Lcom/kaizehuang/vernier/sdk/PackageVisibility$Scope;
+}
+

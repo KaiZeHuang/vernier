@@ -1,0 +1,7 @@
+// Top-level plugin declarations keep external plugin resolution available to convention plugins.
+plugins {
+    alias(libs.plugins.android.application) apply false
+    alias(libs.plugins.compose.compiler) apply false
+    id("vernier.module-boundaries")
+    id("vernier.dependency-analysis")
+}
