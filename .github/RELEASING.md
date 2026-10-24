@@ -12,12 +12,11 @@ allowed to receive the release signing credentials.
 
 ## Historical rebuild compatibility
 
-Historical rebuilds are supported starting at commit
-`641913a4efa743b200454b10b4d2e41ac02f1f39` (inclusive). That revision introduced the complete
-`vernier.android.*` toolchain property contract consumed by the current shared Android setup
-action. Tags on older commits are rejected rather than built with guessed modern SDK, build-tools,
-CMake, or NDK versions.
+The supported rebuild baseline is the repository's first commit. The workflow derives it with
+`git rev-list --max-parents=0` rather than pinning a SHA, so the guard survives forks and history
+rewrites; a pinned SHA silently breaks the moment the history is rewritten, which is exactly what
+happened when Vernier's history was collapsed into a single initial commit. The selected source
+tree always supplies its own pinned toolchain values and Gradle build logic.
 
-The release workflow uses the workflow revision's shared setup action through the `$/` self-
-repository reference while building source from the selected tag. The selected source tree still
-supplies its own pinned toolchain values and Gradle build logic.
+The release workflow runs the shared setup action from the workflow revision itself through the
+`./` local-action reference, while checking out source from the selected tag.

@@ -100,15 +100,21 @@ jobs:
             "+refs/heads/${DEFAULT_BRANCH}:refs/remotes/origin/${DEFAULT_BRANCH}"
 
           tag_commit=$(git rev-parse HEAD)
-          minimum_supported_release_commit=641913a4efa743b200454b10b4d2e41ac02f1f39
 
-          # The shared setup action consumes the vernier.android.* property contract added by
-          # this commit. Earlier revisions are deliberately unsupported instead of being rebuilt
-          # with guessed modern Android toolchain versions.
+          # Historical rebuild baseline. Vernier's history was collapsed into a single initial
+          # commit, so the SHA this check used to pin no longer exists in the repository; deriving
+          # the baseline from the first commit keeps the guard meaningful on forks and after any
+          # future rewrite. The reachability check below remains the real trust boundary.
+          minimum_supported_release_commit=$(git rev-list --max-parents=0 "origin/${DEFAULT_BRANCH}" | tail -n 1)
+          if [ -z "${minimum_supported_release_commit}" ]; then
+            echo "Unable to resolve the repository's initial commit." >&2
+            exit 1
+          fi
+
           if ! git merge-base --is-ancestor \
             "${minimum_supported_release_commit}" \
             "${tag_commit}"; then
-            echo "Release tag predates the supported historical-build baseline (${minimum_supported_release_commit})." >&2
+            echo "Release tag predates the repository's initial commit (${minimum_supported_release_commit})." >&2
             exit 1
           fi
 
