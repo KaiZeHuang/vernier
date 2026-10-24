@@ -125,7 +125,7 @@ jobs:
 
       - name: Set up Android build toolchain
         id: toolchain
-        uses: $/.github/actions/setup-android-build
+        uses: ./.github/actions/setup-android-build
         with:
           # Tag builds restore the cache but do not write it back: GitHub scopes a cache entry to
           # the ref that created it, so an entry written from refs/tags/v* can never be read by
@@ -143,38 +143,46 @@ jobs:
         run: |
           set -euo pipefail
 
-          required_secrets=(
+          # Release signing is optional so a first release can be published before a keystore
+          # exists; only a malformed keystore is fatal.
+          signing_secrets=(
             ANDROID_KEYSTORE_BASE64
             ANDROID_KEYSTORE_PASSWORD
             ANDROID_KEY_ALIAS
             ANDROID_KEY_PASSWORD
           )
-          missing_secrets=()
-          for secret_name in "${required_secrets[@]}"; do
+
+          has_signing=true
+          for secret_name in "${signing_secrets[@]}"; do
             if [ -z "${!secret_name:-}" ]; then
-              missing_secrets+=("${secret_name}")
+              has_signing=false
             fi
           done
-          if [ "${#missing_secrets[@]}" -ne 0 ]; then
-            printf 'Missing required secrets in the Telegram environment: %s\n' \
-              "$(IFS=', '; echo "${missing_secrets[*]}")" >&2
-            exit 1
+
+          keystore_path=""
+          if [ "$has_signing" = true ]; then
+            keystore_path="$RUNNER_TEMP/release.keystore"
+            if ! printf '%s' "${ANDROID_KEYSTORE_BASE64}" | base64 --decode > "$keystore_path"; then
+              echo "ANDROID_KEYSTORE_BASE64 is not valid base64." >&2
+              exit 1
+            fi
+            if [ ! -s "${keystore_path}" ]; then
+              echo "Decoded release keystore is empty." >&2
+              exit 1
+            fi
+            chmod 600 "${keystore_path}"
+          else
+            echo '::notice::Release signing secrets are not configured; the release APK is signed with the debug key.'
           fi
 
-          keystore_path="$RUNNER_TEMP/release.keystore"
-          if ! printf '%s' "${ANDROID_KEYSTORE_BASE64}" | base64 --decode > "$keystore_path"; then
-            echo "ANDROID_KEYSTORE_BASE64 is not valid base64." >&2
-            exit 1
-          fi
-          if [ ! -s "${keystore_path}" ]; then
-            echo "Decoded release keystore is empty." >&2
-            exit 1
-          fi
-          chmod 600 "${keystore_path}"
-          echo "keystore_path=$keystore_path" >> "$GITHUB_OUTPUT"
+          {
+            echo "keystore_path=${keystore_path}"
+            echo "release-signing=${has_signing}"
+          } >> "$GITHUB_OUTPUT"
 
       - name: Extract expected signing fingerprint
         id: signing_fingerprint
+        if: steps.keystore.outputs.release-signing == 'true'
         shell: bash
         env:
           ANDROID_KEYSTORE_PATH: ${{ steps.keystore.outputs.keystore_path }}
@@ -363,6 +371,7 @@ jobs:
           } >> "$GITHUB_OUTPUT"
 
       - name: Verify APK signature
+        if: steps.keystore.outputs.release-signing == 'true'
         shell: bash
         env:
           APK_PATH: ${{ steps.metadata.outputs.apk_path }}

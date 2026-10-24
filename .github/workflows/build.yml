@@ -60,40 +60,63 @@ jobs:
         run: |
           set -euo pipefail
 
-          required_secrets=(
+          # Release signing and the Telegram push are optional capabilities, not build
+          # prerequisites: a fork, a fresh clone or a pull-request build has neither, and it
+          # must still produce and publish a working APK. Only a malformed keystore is fatal.
+          signing_secrets=(
             ANDROID_KEYSTORE_BASE64
             ANDROID_KEYSTORE_PASSWORD
             ANDROID_KEY_ALIAS
             ANDROID_KEY_PASSWORD
+          )
+          telegram_secrets=(
             TELEGRAM_BOT_TOKEN
             TELEGRAM_CHAT_ID
           )
-          missing_secrets=()
-          for secret_name in "${required_secrets[@]}"; do
+
+          has_signing=true
+          for secret_name in "${signing_secrets[@]}"; do
             if [ -z "${!secret_name:-}" ]; then
-              missing_secrets+=("${secret_name}")
+              has_signing=false
             fi
           done
-          if [ "${#missing_secrets[@]}" -ne 0 ]; then
-            printf 'Missing required secrets in the Telegram environment: %s\n' \
-              "$(IFS=', '; echo "${missing_secrets[*]}")" >&2
-            exit 1
+
+          has_telegram=true
+          for secret_name in "${telegram_secrets[@]}"; do
+            if [ -z "${!secret_name:-}" ]; then
+              has_telegram=false
+            fi
+          done
+
+          keystore_path=""
+          if [ "$has_signing" = true ]; then
+            keystore_path="$RUNNER_TEMP/release.keystore"
+            if ! printf '%s' "${ANDROID_KEYSTORE_BASE64}" | base64 --decode > "$keystore_path"; then
+              echo "ANDROID_KEYSTORE_BASE64 is not valid base64." >&2
+              exit 1
+            fi
+            if [ ! -s "${keystore_path}" ]; then
+              echo "Decoded release keystore is empty." >&2
+              exit 1
+            fi
+            chmod 600 "${keystore_path}"
+          else
+            echo '::notice::Release signing secrets are not configured; the APK is built and published with the debug signing key.'
           fi
 
-          keystore_path="$RUNNER_TEMP/release.keystore"
-          if ! printf '%s' "${ANDROID_KEYSTORE_BASE64}" | base64 --decode > "$keystore_path"; then
-            echo "ANDROID_KEYSTORE_BASE64 is not valid base64." >&2
-            exit 1
+          if [ "$has_telegram" = false ]; then
+            echo '::notice::Telegram secrets are not configured; the Telegram push step is skipped.'
           fi
-          if [ ! -s "${keystore_path}" ]; then
-            echo "Decoded release keystore is empty." >&2
-            exit 1
-          fi
-          chmod 600 "${keystore_path}"
-          echo "keystore_path=$keystore_path" >> "$GITHUB_OUTPUT"
+
+          {
+            echo "keystore_path=${keystore_path}"
+            echo "release-signing=${has_signing}"
+            echo "telegram=${has_telegram}"
+          } >> "$GITHUB_OUTPUT"
 
       - name: Extract expected signing fingerprint
         id: signing_fingerprint
+        if: steps.keystore.outputs.release-signing == 'true'
         shell: bash
         env:
           ANDROID_KEYSTORE_PATH: ${{ steps.keystore.outputs.keystore_path }}
@@ -185,6 +208,7 @@ jobs:
           COMMIT_URL: ${{ github.server_url }}/${{ github.repository }}/commit/${{ github.sha }}
           DURATION_HUMAN: ${{ steps.build.outputs.duration_human }}
           GIT_BRANCH: ${{ github.ref_name }}
+          RELEASE_SIGNING: ${{ steps.keystore.outputs.release-signing }}
           SIGNER_NAME: ${{ steps.signing_fingerprint.outputs.signer_name }}
         run: |
           set -euo pipefail
@@ -279,6 +303,7 @@ jobs:
           duration_human = os.environ["DURATION_HUMAN"]
           git_branch = os.environ["GIT_BRANCH"]
           git_hash = os.environ["GIT_HASH"]
+          release_signing = os.environ.get("RELEASE_SIGNING") == "true"
           signer_name = os.environ["SIGNER_NAME"] or "Unknown signer"
 
           def escape_html(text: str) -> str:
@@ -304,7 +329,9 @@ jobs:
                   f"Branch: <b>{escape_html(git_branch)}</b>",
                   f'Action: <a href="{escape_html_attribute(action_run_url)}">#{escape_html(action_run_number)}</a>',
                   f"Build duration: <b>{escape_html(duration_human)}</b>",
-                  f"Signature: <b>verified by {escape_html(signer_name)}</b>",
+                  f"Signature: <b>verified by {escape_html(signer_name)}</b>"
+                   if release_signing
+                   else "Signature: <b>debug key (release signing not configured)</b>",
               ]
               return "\n".join(lines)
 
@@ -380,6 +407,7 @@ jobs:
           } >> "$GITHUB_OUTPUT"
 
       - name: Verify APK signature
+        if: steps.keystore.outputs.release-signing == 'true'
         shell: bash
         env:
           APK_PATH: ${{ steps.metadata.outputs.apk_path }}
@@ -1023,6 +1051,7 @@ jobs:
           fi
 
       - name: Push APK to Telegram channel
+        if: steps.keystore.outputs.telegram == 'true'
         shell: bash
         env:
           APK_PATH: ${{ steps.metadata.outputs.apk_path }}

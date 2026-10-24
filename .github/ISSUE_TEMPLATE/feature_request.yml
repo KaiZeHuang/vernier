@@ -1,0 +1,55 @@
+name: Feature request
+description: Propose something Vernier should do
+labels:
+  - enhancement
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Describe the **problem** first, then the solution you have in mind. A good problem statement survives a change of design; a solution-only request usually does not.
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: The problem
+      description: What is hard, impossible, or misleading today? Who hits it?
+      placeholder: I cannot tell whether a detector was skipped because the API is unavailable or because the device genuinely lacks the feature.
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed solution
+      description: What you would like Vernier to do. Mockups and sketches welcome.
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: Other ways you tried to solve this, including workarounds.
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      description: Which part of Vernier this touches.
+      options:
+        - Detector coverage (a new or improved probe)
+        - Dashboard and measurement groups
+        - Scan records and export
+        - SDK surface
+        - Settings and appearance
+        - Build, CI, or tooling
+        - Documentation
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional context
+      description: Device state, related issues, upstream references, prior art in other tools.

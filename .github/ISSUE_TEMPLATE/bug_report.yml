@@ -1,0 +1,96 @@
+name: Bug report
+description: Report something Vernier got wrong
+labels:
+  - bug
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report a bug.
+        Before filing, please check the [existing issues](https://github.com/KaiZeHuang/vernier/issues?q=is%3Aissue) — Vernier is a young project and the same defect is often already known.
+
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened
+      description: Describe the observed behaviour. State what you expected to happen instead.
+      placeholder: The Root detector reported "all clear" on a device where Magisk is installed.
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Steps to reproduce
+      description: Number the steps. Include the exact device state (rooted, unlocked bootloader, custom ROM, and so on).
+      placeholder: |
+        1. Install the APK on a Pixel 7 with a locked bootloader and Magisk 28.1 installed.
+        2. Open Vernier, run a scan.
+        3. Open the Root group.
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behaviour
+      description: What should have happened, and why.
+    validations:
+      required: true
+
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Evidence
+      description: |
+        Paste the exported scan report from the records page. **Redact anything you consider sensitive** — serial numbers, IMEI, and account identifiers.
+        If the report is large, attach it as a file instead of pasting.
+      render: text
+
+  - type: input
+    id: version
+    attributes:
+      label: Vernier version
+      description: The versionName from Settings → About, or the release tag you installed.
+      placeholder: 2026.10.24-7261b49420a9
+    validations:
+      required: true
+
+  - type: dropdown
+    id: build-type
+    attributes:
+      label: Build type
+      options:
+        - GitHub release
+        - nightly
+        - Built from source
+    validations:
+      required: true
+
+  - type: input
+    id: device
+    attributes:
+      label: Device and Android version
+      placeholder: Google Pixel 7, Android 15 (API 35), unlocked bootloader
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant logs
+      description: |
+        `adb logcat` output around the failure, or a stack trace. Collapse anything enormous.
+      render: shell
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Before submitting
+      options:
+        - label: I searched the existing issues and this is not a duplicate.
+          required: true
+        - label: I redacted sensitive identifiers from the attached report and logs.
+          required: true
+        - label: This is a defect in Vernier's own detection, not a vulnerability in the Android platform or in another app.
+          required: true

@@ -4,7 +4,9 @@
 # shell variables and nested quotes. Files avoid that entirely.
 set -uo pipefail
 
-S=/mnt/c/Users/hesti/Desktop/Vernier-Detector-Refactoring/guest/wsl/sync-aosp.sh
+# Resolve the repository root from this script, so the diagnostic works from any checkout.
+REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+S="$REPO_ROOT/guest/wsl/sync-aosp.sh"
 
 echo "=== file exists / mtime ==="
 ls -la "$S"
@@ -16,14 +18,15 @@ echo "=== non-ASCII bytes (should be none) ==="
 LC_ALL=C grep -n '[^[:print:][:space:]]' "$S" || echo "(none - good)"
 
 echo "=== repo reachable with our PATH ==="
-export HOME=/home/dmond
-export PATH="/home/dmond/bin:/home/dmond/opt/deps/usr/bin:$PATH"
+# A login shell would set these; the diagnostic is often run through
+# `wsl.exe -lc`, so set them explicitly. HOME is inherited as-is.
+export PATH="$HOME/bin:$HOME/opt/deps/usr/bin:$PATH"
 command -v repo || echo "REPO NOT FOUND"
 
 echo "=== unit file on disk ==="
-ls -la /home/dmond/.config/systemd/user/aosp-sync.service
+ls -la "$HOME"/.config/systemd/user/aosp-sync.service
 echo "--- Environment lines ---"
-grep -E '^(Environment|ExecStart)' /home/dmond/.config/systemd/user/aosp-sync.service
+grep -E '^(Environment|ExecStart)' "$HOME"/.config/systemd/user/aosp-sync.service
 
 echo "=== systemd view ==="
 systemctl --user show aosp-sync.service -p Environment -p ExecStart --no-pager
@@ -32,4 +35,4 @@ echo "=== service status ==="
 systemctl --user status aosp-sync.service --no-pager -n 8 2>&1 | tail -10
 
 echo "=== log tail ==="
-tail -6 /home/dmond/sp/aosp-sync.log
+tail -6 "$HOME"/sp/aosp-sync.log

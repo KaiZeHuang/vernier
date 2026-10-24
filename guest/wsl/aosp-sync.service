@@ -6,14 +6,17 @@ Wants=network-online.target
 
 [Service]
 Type=simple
-WorkingDirectory=/home/dmond/sp/aosp
+WorkingDirectory=%h/sp/aosp
 
 # systemd does not read ~/.profile or ~/.profile.d, so repo (~/bin) and
 # the zero-sudo deps (~/opt/deps) must be added explicitly.
-Environment=HOME=/home/dmond
-Environment=PATH=/home/dmond/bin:/home/dmond/opt/deps/usr/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+Environment=HOME=%h
+Environment=PATH=%h/bin:%h/opt/deps/usr/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+# Where the Vernier checkout lives inside WSL. Override with `systemctl edit aosp-sync.service`
+# or by dropping a drop-in into ~/.config/systemd/user/.
+Environment=VERNIER_REPO_ROOT=%h/vernier
 
-ExecStart=/bin/bash /mnt/c/Users/hesti/Desktop/Vernier-Detector-Refactoring/guest/wsl/sync-aosp.sh
+ExecStart=/bin/bash ${VERNIER_REPO_ROOT}/guest/wsl/sync-aosp.sh
 Restart=always
 RestartSec=15
 

@@ -2,7 +2,12 @@
 # Read the GSI ext4 image with debugfs (no mount, no root, no loop device).
 set -uo pipefail
 
-IMG=/mnt/c/Users/hesti/gsi-win/gsi_arm64/system.img
+# No default: point GSI_IMAGE at your extracted image, or pass it as $1.
+IMG="${1:-${GSI_IMAGE:-}}"
+if [ -z "$IMG" ]; then
+  echo "usage: $0 /path/to/system.img  (or export GSI_IMAGE=...)" >&2
+  exit 2
+fi
 OUT="$HOME/gsi-dump.txt"
 
 command -v debugfs >/dev/null 2>&1 || { echo "debugfs not installed"; exit 1; }

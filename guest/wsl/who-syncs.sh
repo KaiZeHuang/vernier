@@ -11,20 +11,20 @@ systemctl --user status aosp-sync.service --no-pager -n 5 2>&1 | tail -7
 
 echo ""
 echo "=== pidfile vs actual ==="
-echo "pidfile: $(cat /home/dmond/sp/aosp-sync.pid 2>/dev/null || echo none)"
-ps -p "$(cat /home/dmond/sp/aosp-sync.pid 2>/dev/null || echo 0)" -o pid,args --no-headers 2>/dev/null || echo "(pid from pidfile not alive)"
+echo "pidfile: $(cat "$HOME"/sp/aosp-sync.pid 2>/dev/null || echo none)"
+ps -p "$(cat "$HOME"/sp/aosp-sync.pid 2>/dev/null || echo 0)" -o pid,args --no-headers 2>/dev/null || echo "(pid from pidfile not alive)"
 
 echo ""
 echo "=== heartbeat ==="
-cat /home/dmond/sp/aosp-sync.hb 2>/dev/null
+cat "$HOME"/sp/aosp-sync.hb 2>/dev/null
 
 echo ""
 echo "=== full log (last 25) ==="
-tail -25 /home/dmond/sp/aosp-sync.log 2>/dev/null
+tail -25 "$HOME"/sp/aosp-sync.log 2>/dev/null
 
 echo ""
 echo "=== size now vs 60s ==="
-a=$(du -sm /home/dmond/sp/aosp 2>/dev/null | cut -f1)
+a=$(du -sm "$HOME"/sp/aosp 2>/dev/null | cut -f1)
 sleep 45
-b=$(du -sm /home/dmond/sp/aosp 2>/dev/null | cut -f1)
+b=$(du -sm "$HOME"/sp/aosp 2>/dev/null | cut -f1)
 echo "size ${a}MB -> ${b}MB   delta=$((b-a))MB in 45s"

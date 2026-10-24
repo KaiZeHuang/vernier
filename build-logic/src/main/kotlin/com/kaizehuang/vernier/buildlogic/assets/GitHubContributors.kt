@@ -72,7 +72,7 @@ internal fun githubRequestHeaders(url: String, token: String?): Map<String, Stri
         put("User-Agent", "Mozilla/5.0 (X11; Linux x86_64; rv:154.0) Gecko/20100101 Firefox/154.0")
         put("Accept", "application/json")
     } else {
-        put("User-Agent", "Vernier-Detector-Refactoring-Gradle")
+        put("User-Agent", "Vernier-Gradle")
         put("Accept", "application/vnd.github+json")
         put("X-GitHub-Api-Version", "2022-11-28")
     }

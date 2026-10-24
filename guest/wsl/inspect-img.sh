@@ -3,7 +3,12 @@
 # The first sectors are zeroed, so probe further in for the magic.
 set -uo pipefail
 
-IMG="${1:-/mnt/c/Users/hesti/gsi-win/gsi_arm64/system.img}"
+# No default: point GSI_IMAGE at your extracted image, or pass it as $1.
+IMG="${1:-${GSI_IMAGE:-}}"
+if [ -z "$IMG" ]; then
+  echo "usage: $0 /path/to/system.img  (or export GSI_IMAGE=...)" >&2
+  exit 2
+fi
 echo "=== file: $IMG"
 ls -la "$IMG"
 

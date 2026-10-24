@@ -15,6 +15,9 @@
 
 <p align="center">
   <a href="https://github.com/KaiZeHuang/vernier/actions/workflows/build.yml"><img src="https://img.shields.io/github/actions/workflow/status/KaiZeHuang/vernier/build.yml?branch=main&amp;style=flat-square&amp;label=build&amp;logo=githubactions&amp;logoColor=white" alt="主分支构建状态"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/github/license/KaiZeHuang/vernier?style=flat-square&amp;label=%E8%AE%B8%E5%8F%AF&amp;logo=apache&amp;logoColor=white" alt="Apache-2.0 许可"></a>
+  <a href="https://github.com/KaiZeHuang/vernier/releases"><img src="https://img.shields.io/github/v/release/KaiZeHuang/vernier?style=flat-square&amp;include_prereleases&amp;label=%E5%8F%91%E5%B8%83" alt="最新发布"></a>
+  <a href="https://github.com/KaiZeHuang/vernier/releases"><img src="https://img.shields.io/github/downloads/KaiZeHuang/vernier/total?style=flat-square&amp;label=%E4%B8%8B%E8%BD%BD%E9%87%8F" alt="总下载量"></a>
   <a href="#兼容性"><img src="https://img.shields.io/badge/Android-10%2B-3DDC84?style=flat-square&amp;logo=android&amp;logoColor=white" alt="支持 Android 10 及以上版本"></a>
 </p>
 
@@ -86,7 +89,7 @@ Native Root 另有默认关闭的 [fsnotify SRCU 时序实验](feature/nativeroo
 # 项目结构
 
 ```text
-Vernier-Detector-Refactoring/
+vernier/
 ├─ app/                   # UI 组合根：Activity、仪表盘卡片、通知
 ├─ sdk/runtime/           # Headless 组合根：检测器目录、扫描 API、进程钩子、原生库注册表
 ├─ sdk/aar/               # 可分发的 SDK：把所有 headless 模块融合成一个 AAR

@@ -15,6 +15,9 @@
 
 <p align="center">
   <a href="https://github.com/KaiZeHuang/vernier/actions/workflows/build.yml"><img src="https://img.shields.io/github/actions/workflow/status/KaiZeHuang/vernier/build.yml?branch=main&amp;style=flat-square&amp;label=build&amp;logo=githubactions&amp;logoColor=white" alt="Main branch build workflow status"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/github/license/KaiZeHuang/vernier?style=flat-square&amp;label=license&amp;logo=apache&amp;logoColor=white" alt="Apache-2.0 license"></a>
+  <a href="https://github.com/KaiZeHuang/vernier/releases"><img src="https://img.shields.io/github/v/release/KaiZeHuang/vernier?style=flat-square&amp;include_prereleases&amp;label=release" alt="Latest release"></a>
+  <a href="https://github.com/KaiZeHuang/vernier/releases"><img src="https://img.shields.io/github/downloads/KaiZeHuang/vernier/total?style=flat-square&amp;label=downloads" alt="Total downloads"></a>
   <a href="#compatibility"><img src="https://img.shields.io/badge/Android-10%2B-3DDC84?style=flat-square&amp;logo=android&amp;logoColor=white" alt="Android 10 or later"></a>
 </p>
 
@@ -86,7 +89,7 @@ Supporting modules provide the dashboard, device information, settings, update c
 # Architecture
 
 ```text
-Vernier-Detector-Refactoring/
+vernier/
 ├─ app/                   # UI composition root: activities, dashboard cards, notifications
 ├─ sdk/runtime/           # Headless composition root: detector catalog, scan API, process hooks, native library registry
 ├─ sdk/aar/               # The distributable SDK: every headless module fused into one AAR

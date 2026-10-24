@@ -2,7 +2,12 @@
 # Mount the GSI ext4 system.img read-only and report what is actually inside.
 set -uo pipefail
 
-IMG=/mnt/c/Users/hesti/gsi-win/gsi_arm64/system.img
+# No default: point GSI_IMAGE at your extracted image, or pass it as $1.
+IMG="${1:-${GSI_IMAGE:-}}"
+if [ -z "$IMG" ]; then
+  echo "usage: $0 /path/to/system.img  (or export GSI_IMAGE=...)" >&2
+  exit 2
+fi
 MNT="$HOME/gsi-mount"
 
 echo "=== free space ==="

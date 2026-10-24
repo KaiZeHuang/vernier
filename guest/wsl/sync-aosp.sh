@@ -17,8 +17,9 @@
 set -uo pipefail
 
 # systemd PATH is minimal: repo lives in ~/bin, zero-sudo deps in ~/opt/deps.
-export HOME="${HOME:-/home/dmond}"
-export PATH="/home/dmond/bin:/home/dmond/opt/deps/usr/bin:$PATH"
+# HOME is inherited; force it only when the caller runs without a login shell.
+export HOME="${HOME:-/root}"
+export PATH="$HOME/bin:$HOME/opt/deps/usr/bin:$PATH"
 
 # Refuse to run if repo is still not resolvable, instead of burning 40 retries.
 if ! command -v repo >/dev/null 2>&1; then
@@ -27,12 +28,12 @@ if ! command -v repo >/dev/null 2>&1; then
 fi
 echo "repo = $(command -v repo)"
 
-AOSP="${AOSP:-/home/dmond/sp/aosp}"
-LOG=/home/dmond/sp/aosp-sync.log
-PIDFILE=/home/dmond/sp/aosp-sync.pid
-HEARTBEAT=/home/dmond/sp/aosp-sync.hb
+AOSP="${AOSP:-$HOME/sp/aosp}"
+LOG="$HOME"/sp/aosp-sync.log
+PIDFILE="$HOME"/sp/aosp-sync.pid
+HEARTBEAT="$HOME"/sp/aosp-sync.hb
 
-mkdir -p /home/dmond/sp
+mkdir -p "$HOME"/sp
 cd "$AOSP" || { echo "no such dir: $AOSP"; exit 1; }
 
 # Avoid concurrent syncs.

@@ -7,7 +7,7 @@
 # /mnt/c, while competing with the real systemd run for the same repo dir.
 set -uo pipefail
 
-KEEP="$(cat /home/dmond/sp/aosp-sync.pid 2>/dev/null || echo 0)"
+KEEP="$(cat "$HOME"/sp/aosp-sync.pid 2>/dev/null || echo 0)"
 echo "keeping pid=$KEEP"
 
 echo "=== all sync-aosp.sh before ==="
@@ -37,4 +37,4 @@ echo ""
 echo "=== real repo procs count ==="
 ps -eo args | grep -c 'repo/main.py' || echo 0
 echo "=== heartbeat ==="
-cat /home/dmond/sp/aosp-sync.hb 2>/dev/null
+cat "$HOME"/sp/aosp-sync.hb 2>/dev/null

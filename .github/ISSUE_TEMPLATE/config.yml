@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Ask a question
+    url: https://github.com/KaiZeHuang/vernier/discussions/new?category=q-a
+    about: Usage questions belong in Discussions Q&A, where they stay searchable for the next person.
+  - name: Read the docs
+    url: https://github.com/KaiZeHuang/vernier#quick-start
+    about: Build instructions, SDK integration, and the architecture overview live in the README and docs/.
+  - name: Report a security vulnerability
+    url: https://github.com/KaiZeHuang/vernier/security/advisories/new
+    about: Please report security issues privately through GitHub advisories, never in a public issue.
