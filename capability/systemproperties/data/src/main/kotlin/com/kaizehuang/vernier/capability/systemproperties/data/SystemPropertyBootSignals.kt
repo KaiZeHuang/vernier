@@ -230,6 +230,13 @@ internal val trackedRawBootProperties = listOf(
     "ro.boot.verifiedbootstate",
     "ro.boot.flash.locked",
     "ro.boot.vbmeta.device_state",
+    // Both are rewritten by PlayIntegrityFix's module/post-fs-data.sh with
+    // `resetprop_if_diff`: the Samsung Knox warranty bit is forced to 0 and the Realme boot
+    // state to green. resetprop edits the property area itself, so every read path agrees and
+    // source-consistency cannot see it — but the kernel-supplied androidboot.* value in
+    // /proc/cmdline and /proc/bootconfig is out of reach, so the contradiction survives.
+    "ro.boot.warranty_bit",
+    "ro.boot.realmebootstate",
 )
 
 internal val partitionVerifiedProperties = listOf(

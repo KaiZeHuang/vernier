@@ -30,7 +30,7 @@ The System Properties detector asks whether security-relevant properties describ
 
 ### Raw boot parameters and property area layout
 
-- Observable signal: androidboot.* in /proc/cmdline and /proc/bootconfig, and holes in the /dev/__properties__ areas.
+- Observable signal: androidboot.* in /proc/cmdline and /proc/bootconfig, and holes in the /dev/__properties__ areas. The raw value is cross-checked against the runtime ro.boot.* for the verified boot state, flash lock state, vbmeta device state, Samsung warranty bit and Realme boot state.
 - Producing subsystem: the bootloader's command line and bionic's property areas.
 - Mechanism: init imports androidboot.* as ro.boot.*; resetprop-style tools rewrite property areas and can leave holes.
 - References: system/core init/property_service.cpp (bootconfig and cmdline import); bionic libc/include/sys/system_properties.h. Discovery only for the property area hole heuristics.
