@@ -176,7 +176,65 @@ internal fun SystemPropertiesRepository.buildBuildConstantSignals(): List<System
         )
     }
 
+    buildBuildProfileConsistencySignal(
+        fingerprint = Build.FINGERPRINT.orEmpty(),
+        buildType = Build.TYPE.orEmpty(),
+        buildTags = Build.TAGS.orEmpty(),
+    )?.let { signals += it }
+
     return signals
+}
+
+/**
+ * The framework constants and the fingerprint's own suffix are read from the same property area,
+ * so a module that rewrites `ro.*.build.type` and `ro.*.build.tags` but not `ro.build.fingerprint`
+ * leaves the two disagreeing. PlayIntegrityFix does exactly that in `module/post-fs-data.sh`.
+ *
+ * Only the hiding direction is reported: a fingerprint that still admits `userdebug`/`eng` or
+ * `test-keys` while the constants claim a release build. The reverse — a fingerprint that looks
+ * less locked than the constants — is not evidence of hiding and stays silent.
+ */
+internal fun buildBuildProfileConsistencySignal(
+    fingerprint: String,
+    buildType: String,
+    buildTags: String,
+): SystemPropertySignal? {
+    val suffix = fingerprint.split(':').lastOrNull() ?: return null
+    val typeAndTags = suffix.split('/')
+    if (typeAndTags.size != 2) {
+        return null
+    }
+    val fingerprintType = typeAndTags[0].trim().lowercase()
+    val fingerprintTags = typeAndTags[1].trim().lowercase()
+    val claimedType = buildType.trim().lowercase()
+    val claimedTags = buildTags.trim().lowercase()
+
+    val hiddenType = claimedType == "user" && fingerprintType in setOf("userdebug", "eng")
+    val hiddenTags = claimedTags.contains("release-keys") &&
+            (fingerprintTags.contains("test-keys") || fingerprintTags.contains("dev-keys"))
+    if (!hiddenType && !hiddenTags) {
+        return null
+    }
+
+    return SystemPropertySignal(
+        property = "Build.TYPE/TAGS <> Build.FINGERPRINT",
+        description = "Build profile constants disagree with the fingerprint",
+        value = "Contradiction",
+        category = SystemPropertyCategory.PROPERTY_CONSISTENCY,
+        severity = SystemPropertySeverity.DANGER,
+        source = SystemPropertySource.BUILD,
+        detail = buildString {
+            append("Build.TYPE=")
+            append(buildType)
+            append(", Build.TAGS=")
+            append(buildTags)
+            appendLine()
+            append("fingerprint suffix = ")
+            append(fingerprintType)
+            append('/')
+            append(fingerprintTags)
+        },
+    )
 }
 
 internal fun SystemPropertiesRepository.buildPropAreaSignals(

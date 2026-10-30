@@ -28,6 +28,17 @@ The System Properties detector asks whether security-relevant properties describ
 - Result states: mismatch, consistent, unavailable.
 - Interpretation: a disagreement is evidence of rewriting.
 
+### Build profile consistency
+
+- Observable signal: android.os.Build.TYPE and Build.TAGS against the type and tags encoded in the tail of Build.FINGERPRINT.
+- Producing subsystem: init's property area, read once through the framework constants and once through the fingerprint string that embeds them.
+- Mechanism: the fingerprint is composed as brand/product/device:release/id/incremental:type/tags, so its tail must agree with ro.build.type and ro.build.tags. A module that rewrites those two properties but not ro.build.fingerprint leaves the pair disagreeing; PlayIntegrityFix's module/post-fs-data.sh rewrites every ro.*.build.type and ro.*.build.tags with resetprop and never touches the fingerprint.
+- References: build/make/core/version_defaults.mk and build/soong for the fingerprint composition; system/core init/property_service.cpp for the property area. Discovery only for the PlayIntegrityFix rewrite, which was read from its module script.
+- Applicability: every release.
+- Visibility limits: only the hiding direction is reported — a fingerprint that still admits userdebug, eng, test-keys or dev-keys while the constants claim a release build. The reverse direction is not evidence of hiding. A module that rewrites the fingerprint as well leaves nothing to compare, and a fingerprint whose tail does not parse produces no signal.
+- Result states: mismatch, consistent, unavailable.
+- Interpretation: a mismatch is danger; agreement is not proof that the build profile is untouched.
+
 ### Raw boot parameters and property area layout
 
 - Observable signal: androidboot.* in /proc/cmdline and /proc/bootconfig, and holes in the /dev/__properties__ areas. The raw value is cross-checked against the runtime ro.boot.* for the verified boot state, flash lock state, vbmeta device state, Samsung warranty bit and Realme boot state.
