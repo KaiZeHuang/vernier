@@ -35,6 +35,33 @@ Vernier 在 Android 设备上采集并关联与安全相关的证据，用于发
 
 应用由 Jetpack Compose 界面、按功能拆分的 Gradle 模块和 C++/汇编原生库组成；同一套检测器也以不含 UI 的 SDK AAR 形式发布，可以嵌入其他应用。检测结果是用于诊断的信号，不代表对设备“安全”或“已受损”的权威认证。
 
+# 检测覆盖
+
+18 个探测器，按仪表盘的五个测量组归类：设备如何启动与如何证明、本进程里运行着什么、文件系统呈现什么、策略与属性层声称什么，以及外围环境。
+
+每个探测器都附带一份 `EVIDENCE.md`，写明它观测到什么、为什么这算证据，以及同样重要的——它**看不到什么**，并给出内核与 AOSP 源码出处。下表描述的是**设计覆盖**，不是任何具体设备上的实测结论；覆盖能力随 OEM、内核和 Android 版本变化，探针不受支持时会明确报告，而不是猜测。
+
+| 探测器 | 观测内容 | 证据记录 |
+| :--- | :--- | :--- |
+| `bootloader` | 证明启动状态、启动一致性、空输入 VBMeta 摘要、三星保修熔丝、Widevine | [记录](feature/bootloader/EVIDENCE.md) |
+| `tee` | 证明链与 RootOfTrust、KeyStore 行为、generateKey 应答、Keystore2 binder 与授权元数据、SOTER、计时侧信道 | [记录](feature/tee/EVIDENCE.md) |
+| `playintegrityfix` | PIF 残留属性、来源一致性、运行时映射 | [记录](feature/playintegrityfix/EVIDENCE.md) |
+| `zygisk` | 链接器与命名空间完整性、内存映射族、线程、描述符、FD 陷阱 | [记录](feature/zygisk/EVIDENCE.md) |
+| `lsposed` | 运行时类与加载器、调用栈与 binder 桥、Zygote 权限 GID、脏策略规则、模块元数据 | [记录](feature/lsposed/EVIDENCE.md) |
+| `memory` | 符号解析与函数序言、映射与加载器可见性、信号处理器 | [记录](feature/memory/EVIDENCE.md) |
+| `heapresidue` | ART String 中的 Java 启动参数残留、隔离进程采集与 GC 时序 | [记录](feature/heapresidue/EVIDENCE.md) |
+| `mount` | 挂载表、跨视图一致性、Zygote Next 与隔离进程挂载视图、启动预加载 | [记录](feature/mount/EVIDENCE.md) |
+| `su` | su 二进制与 root 守护进程、进程上下文、可疑进程 | [记录](feature/su/EVIDENCE.md) |
+| `nativeroot` | KernelPatch supercall、netlink 权限边界、KernelSU 接口、SUSFS 侧信道、cgroup 与挂载命名空间、fsnotify SRCU 时序 | [记录](feature/nativeroot/EVIDENCE.md) |
+| `rootmanagers` | 启动器可见性、管理器签名密钥、原生载荷、隐藏图标、清单标识锚点 | [记录](feature/rootmanagers/EVIDENCE.md) |
+| `selinux` | 强制状态、脏策略规则、上下文有效性、策略重载、审计完整性、SID 表一致性、App Zygote AVC 画像 | [记录](feature/selinux/EVIDENCE.md) |
+| `systemproperties` | 安全属性目录、来源一致性、构建画像一致性、原始启动参数、属性区修改时间 | [记录](feature/systemproperties/EVIDENCE.md) |
+| `customrom` | ROM 属性与构建字段、bootloader 锁定状态、ROM 服务/包/原生残留 | [记录](feature/customrom/EVIDENCE.md) |
+| `adbruntime` | 设置与生命周期上下文、USB 运行时广播、ADB 属性上下文、网络 ADB mDNS、线协议标识 | [记录](feature/adbruntime/EVIDENCE.md) |
+| `dangerousapps` | PackageManager 清点、文件系统与 provider 方法、工具专属通道 | [记录](feature/dangerousapps/EVIDENCE.md) |
+| `kernelcheck` | 内核标识一致性、社区内核标记、启动命令行与内核指针、ARM64 CPU 标识 | [记录](feature/kernelcheck/EVIDENCE.md) |
+| `virtualization` | 属性与客体服务、原生桥与翻译执行、图形与蜜罐、宿主应用一致性 | [记录](feature/virtualization/EVIDENCE.md) |
+
 # 快速上手
 
 2. **安装：** 安装到 Android 10 及以上版本的设备，无需 Root 权限。

@@ -34,6 +34,33 @@ Vernier collects and correlates security-relevant evidence on an Android device.
 
 The app combines a Jetpack Compose interface, feature-oriented Gradle modules, and a native C++/assembly library. The same detectors are also published as a UI-free SDK AAR that other applications can embed. Results are diagnostic signals, not an authoritative statement that a device is secure or compromised.
 
+# Detection coverage
+
+Eighteen detectors, grouped the way the dashboard groups them: how the device booted and what it attests, what runs in this process, what the filesystem shows, what the policy and property layers claim, and the environment around all of it.
+
+Every detector ships an `EVIDENCE.md` stating what it observes, why that counts as evidence, and — just as importantly — what it cannot see, with kernel and AOSP source references. This table describes **designed coverage**, not measured results on any particular device; coverage varies by OEM, kernel and Android version, and a probe that is unsupported reports that explicitly instead of guessing.
+
+| Detector | What it observes | Record |
+| :--- | :--- | :--- |
+| `bootloader` | attested boot state, boot consistency, VBMeta digest of empty input, Samsung warranty fuse, Widevine | [record](feature/bootloader/EVIDENCE.md) |
+| `tee` | attestation chain and RootOfTrust, KeyStore behaviour, generateKey reply, Keystore2 binder and grant metadata, SOTER, timing side channel | [record](feature/tee/EVIDENCE.md) |
+| `playintegrityfix` | PIF residue properties, source consistency, runtime maps | [record](feature/playintegrityfix/EVIDENCE.md) |
+| `zygisk` | linker and namespace integrity, memory map families, threads, descriptors, FD trap | [record](feature/zygisk/EVIDENCE.md) |
+| `lsposed` | runtime classes and loaders, stacks and binder bridge, Zygote permission GIDs, dirty policy rules, module metadata | [record](feature/lsposed/EVIDENCE.md) |
+| `memory` | symbol resolution and entry prologues, mappings and loader visibility, signal handlers | [record](feature/memory/EVIDENCE.md) |
+| `heapresidue` | ART String residue of Java startup arguments, isolated-process collection and GC timing | [record](feature/heapresidue/EVIDENCE.md) |
+| `mount` | mount tables, cross-view consistency, Zygote Next and isolated-process mount views, startup preload | [record](feature/mount/EVIDENCE.md) |
+| `su` | su binaries and root daemons, process context, suspicious processes | [record](feature/su/EVIDENCE.md) |
+| `nativeroot` | KernelPatch supercalls, netlink boundary, KernelSU interfaces, SUSFS side channel, cgroup and mount namespace, fsnotify SRCU timing | [record](feature/nativeroot/EVIDENCE.md) |
+| `rootmanagers` | launcher visibility, manager signing keys, native payloads, hidden icons, manifest anchors | [record](feature/rootmanagers/EVIDENCE.md) |
+| `selinux` | enforcement status, dirty policy rules, context validity, policy reload, audit integrity, SID-table consistency, App Zygote AVC profile | [record](feature/selinux/EVIDENCE.md) |
+| `systemproperties` | security property catalog, source consistency, build profile consistency, raw boot parameters, property area modification times | [record](feature/systemproperties/EVIDENCE.md) |
+| `customrom` | ROM properties and build fields, bootloader lock state, ROM services, packages and native residue | [record](feature/customrom/EVIDENCE.md) |
+| `adbruntime` | settings and lifecycle context, USB runtime broadcast, ADB property context, network ADB mDNS, wire protocol identity | [record](feature/adbruntime/EVIDENCE.md) |
+| `dangerousapps` | PackageManager inventory, filesystem and provider methods, tool-specific channels | [record](feature/dangerousapps/EVIDENCE.md) |
+| `kernelcheck` | kernel identity consistency, community kernel markers, boot cmdline and kernel pointers, ARM64 CPU identity | [record](feature/kernelcheck/EVIDENCE.md) |
+| `virtualization` | properties and guest services, native bridge and translated execution, graphics and honeypots, host app consistency | [record](feature/virtualization/EVIDENCE.md) |
+
 # Quick start
 
 1. **Build** the APK yourself with `./gradlew :app:assembleDebug`, or grab a published build from the [releases](https://github.com/KaiZeHuang/vernier/releases).
