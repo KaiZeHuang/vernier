@@ -1,0 +1,33 @@
+# EditorConfig — https://editorconfig.org
+#
+# Git stores LF for text files in this repository. On Windows a checkout may
+# produce CRLF because of a local core.autocrlf setting; editors should still
+# write LF back so that commits stay byte-stable across platforms.
+
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+[*.{kt,kts,java,cpp,c,cc,h,hpp,gradle,xml,py}]
+indent_style = space
+indent_size = 4
+
+[*.{yml,yaml,json,toml}]
+indent_style = space
+indent_size = 2
+
+[*.md]
+# Markdown uses two trailing spaces for hard line breaks.
+trim_trailing_whitespace = false
+
+[Makefile]
+indent_style = tab
+
+[*.{png,jpg,jpeg,webp,gif,ico,so,a,apk,aar,jar,keystore,zip}]
+insert_final_newline = false
+trim_trailing_whitespace = false
+end_of_line = unset

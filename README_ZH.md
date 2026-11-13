@@ -9,7 +9,8 @@
 <p align="center">
   <strong>
     <a href="#快速开始">文档</a> ·
-    <a href="docs/guides/sdk-integration.md">SDK 集成</a>
+    <a href="docs/guides/sdk-integration.md">SDK 集成</a> ·
+    <a href="CHANGELOG_ZH.md">更新日志</a>
   </strong>
 </p>
 
@@ -28,6 +29,12 @@
 <p align="center">
   <a href="README.md">English</a> &nbsp; <a href="README_ZH.md">简体中文</a>
 </p>
+
+<p align="center">
+  <img src="assets/ui-preview-zh.png" alt="Vernier 测量仪表盘界面预览" width="300">
+</p>
+
+<p align="center"><sub><strong>界面预览</strong> — 测量仪表盘的设计稿，非真机截图；图中检测结果仅为示意。</sub></p>
 
 # 项目概述
 

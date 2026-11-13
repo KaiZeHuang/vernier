@@ -9,7 +9,8 @@
 <p align="center">
   <strong>
     <a href="#quick-start">Documentation</a> ·
-    <a href="docs/guides/sdk-integration.md">SDK Integration</a>
+    <a href="docs/guides/sdk-integration.md">SDK Integration</a> ·
+    <a href="CHANGELOG.md">Changelog</a>
   </strong>
 </p>
 
@@ -27,6 +28,12 @@
 <p align="center">
   <a href="README.md">English</a> &nbsp; <a href="README_ZH.md">简体中文</a>
 </p>
+
+<p align="center">
+  <img src="assets/ui-preview-en.png" alt="Vernier measurement dashboard interface preview" width="300">
+</p>
+
+<p align="center"><sub><strong>Interface preview</strong> — a design mockup of the measurement dashboard, not a screenshot from a physical device. The results shown are illustrative.</sub></p>
 
 # Overview
 
