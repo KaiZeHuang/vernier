@@ -67,4 +67,7 @@ limitations under the License.
     <string name="verdict_group_mounts_files">Mounts &amp; files</string>
     <string name="verdict_group_policy_properties">Policy &amp; properties</string>
     <string name="verdict_group_environment">Environment</string>
+    <string name="dashboard_clean_groups_folded">%1$d groups with nothing found</string>
+    <string name="dashboard_clean_groups_expand">Show all</string>
+    <string name="dashboard_clean_groups_collapse">Hide</string>
 </resources>

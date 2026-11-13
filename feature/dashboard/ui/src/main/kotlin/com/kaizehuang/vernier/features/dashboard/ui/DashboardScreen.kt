@@ -87,6 +87,7 @@ fun DashboardScreen(
     val listState = rememberLazyListState()
     val coroutineScope = rememberCoroutineScope()
     var expansionRequest by remember { mutableStateOf<DashboardExpansionRequest?>(null) }
+    var showCleanGroups by remember { mutableStateOf(false) }
     val hostedHorizontalInset = adaptiveValue(material = 16.dp, miuix = 12.dp)
     val pageSpacing = adaptiveValue(material = 16.dp, miuix = 12.dp)
     val showStandaloneMaterialChrome = adaptiveValue(
@@ -117,6 +118,9 @@ fun DashboardScreen(
             VernierSection(group = group, status = status, checked = checked, members = members)
         }
     }
+    // A finished scan leads with the groups that actually found something.
+    val folded = foldSections(sections, scanFinished = !uiState.isLoading, showClean = showCleanGroups)
+    val visibleSections = folded.visible
     val headerCount = (if (showStandaloneMaterialChrome) 1 else 0) + 1
     val exportLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.CreateDocument("text/plain"),
@@ -207,7 +211,7 @@ fun DashboardScreen(
                     onFindingClick = { finding ->
                         val detectorId = finding.detectorId ?: return@DashboardSummarySection
                         val index = indexOfDetector(
-                            sections = sections,
+                            sections = visibleSections,
                             detectorId = detectorId,
                             headerCount = headerCount,
                         )
@@ -224,7 +228,7 @@ fun DashboardScreen(
                 )
             }
             // The measure page reads as five groups, not as one list of eighteen checks.
-            sections.forEach { section ->
+            visibleSections.forEach { section ->
                 item(key = "group-${section.group.name}") {
                     VernierGroupRow(
                         group = section.group,
@@ -248,6 +252,15 @@ fun DashboardScreen(
                     }
                 }
             }
+            if (folded.cleanGroupCount > 0 && !uiState.isLoading) {
+                item(key = "clean-group-fold") {
+                    CleanGroupsFoldRow(
+                        cleanGroupCount = folded.cleanGroupCount,
+                        expanded = showCleanGroups,
+                        onClick = { showCleanGroups = !showCleanGroups },
+                    )
+                }
+            }
             item {
                 deviceProfile.Card()
             }
@@ -265,7 +278,7 @@ private data class DashboardExpansionRequest(
 )
 
 /** One measurement group and the checks it holds, in page order. */
-private data class VernierSection(
+internal data class VernierSection(
     val group: VernierGroup,
     val status: VernierStatus,
     val checked: Int,

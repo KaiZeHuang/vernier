@@ -12,4 +12,7 @@
     <string name="verdict_group_mounts_files">挂载与文件</string>
     <string name="verdict_group_policy_properties">策略与属性</string>
     <string name="verdict_group_environment">运行环境</string>
+    <string name="dashboard_clean_groups_folded">另有 %1$d 个测量组未发现异常</string>
+    <string name="dashboard_clean_groups_expand">展开查看</string>
+    <string name="dashboard_clean_groups_collapse">收起</string>
 </resources>
