@@ -21,7 +21,7 @@ The LSPosed detector asks whether an Xposed-style framework (LSPosed, EdXposed, 
 
 - Observable signal: XposedBridge or LSPHooker frames in current and synthetic stacks, an uncaught exception handler that points to the framework, LSPosed bridge transactions on activity and serial services, framework log tags visible to the app, and framework Unix sockets, descriptors and environment variables in this process.
 - Producing subsystem: ART stacks, the framework's binder bridge, and logd.
-- Mechanism: hooked methods run through the framework's callbacks, and the framework serves its bridge over existing system service binders.
+- Mechanism: hooked methods run through the framework's callbacks, and the framework serves its bridge over existing system service binders. Logcat drops this app's own lines by log tag (`VernierZygotePreloadNative`) and by the probe's control markers, but not merely because a line's body mentions Vernier; a third-party line naming the app alongside framework tokens remains a hit.
 - References: Discovery only: the frame tokens, transaction codes and log tags follow LSPosed's observed behaviour.
 - Applicability: every release; logcat shows other apps' logs only where logd allows.
 - Visibility limits: binder probes depend on hidden API access; logcat usually shows only this app's entries.

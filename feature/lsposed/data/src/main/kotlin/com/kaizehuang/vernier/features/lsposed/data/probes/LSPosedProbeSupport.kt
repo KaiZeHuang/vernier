@@ -11,12 +11,21 @@ internal object LSPosedProbeSupport {
         "lsplant",
     )
 
+    /** Diagnostic phrases that are noise wherever they appear, never hook evidence. */
     val runtimeExcludePatterns = listOf(
-        "vernier",
         "accessing hidden",
         "using reflection",
         "hiddenapi",
     )
+
+    /**
+     * This app's own identity words. The runtime-artifact probe excludes on them because it can
+     * see its own process. Logcat must not: a line written by another process that mentions
+     * Vernier (including the preload trace tag in its body) is exactly the evidence we want, and
+     * excluding on the bare word silently dropped real LSPosed hits. App-owned log lines are
+     * excluded by tag through [selfLogTags] instead.
+     */
+    val selfIdentityTokens = listOf("vernier")
 
     // VernierZygotePreload's trace tag. The app zygote runs under this app's UID, so logd
     // returns its lines to this probe, and they name probe targets such as u:r:lsposed_file:s0.

@@ -143,6 +143,7 @@ class LSPosedRuntimeArtifactProbe(
     ): List<String> {
         return buildList {
             addAll(LSPosedProbeSupport.runtimeExcludePatterns)
+            addAll(LSPosedProbeSupport.selfIdentityTokens)
             add(appPackageName.lowercase())
         }
     }
